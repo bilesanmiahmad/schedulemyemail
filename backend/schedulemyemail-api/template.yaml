@@ -1,0 +1,50 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: >
+  schedulemyemail-api
+
+  Sample SAM Template for schedulemyemail-api
+
+# More info about Globals: https://github.com/awslabs/serverless-application-model/blob/master/docs/globals.rst
+Globals:
+  Function:
+    Timeout: 3
+    MemorySize: 128
+
+Resources:
+  CreateEmailFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: src/create_email/
+      Handler: app.lambda_handler
+      Runtime: python3.10
+      Events:
+        CreateEmail:
+          Type: Api
+          Properties:
+            Path: /emails
+            Method: post
+      Policies: 
+        - DynamoDBCrudPolicy:
+            TableName: !Ref EmailsTable
+
+  EmailsTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName: "Emails"
+      AttributeDefinitions:
+        - AttributeName: "id"
+          AttributeType: "S"
+      KeySchema:
+        - AttributeName: "id"
+          KeyType: "HASH"
+      ProvisionedThroughput:
+        ReadCapacityUnits: 1
+        WriteCapacityUnits: 1
+
+Outputs:
+  EmailSchedulerApi:
+    Description: "API Gateway EmailScheduler Endpoints"
+    Value: !Sub "https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/"
+  
+  
