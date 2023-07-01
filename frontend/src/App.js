@@ -9,18 +9,10 @@ function App() {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    console.log(emailAddress);
-    console.log(scheduledDateTime);
     const scheduledArray = scheduledDateTime.split("T");
-    console.log(scheduledArray);
     const scheduledDate = scheduledArray[0];
     const scheduledTime = scheduledArray[1];
-    // axios
-    // .post('https://q5xfpi7cfc.execute-api.eu-west-2.amazonaws.com/Prod/emails', {emailAddress, emailContent, scheduledDate, scheduledTime})
-    // .then(response => {
-    //   console.log(response)
-    // })
-
+    
     let payload = {
       emailAddress: `${emailAddress}`,
       emailContent: `${emailContent}`,
