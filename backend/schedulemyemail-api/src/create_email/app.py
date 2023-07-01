@@ -30,6 +30,11 @@ def lambda_handler(message, context):
     print(response)
     return {
         'statusCode': 201,
-        'headers': {},
+        'headers': {
+            "Access-Control-Allow-Origin" : '*',
+            'Access-Control-Allow-Headers':'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token',
+            'Access-Control-Allow-Credentials' : True,
+            'Content-Type': 'application/json'
+        },
         'body': json.dumps({'message': 'New Email Scheduled'})
     }
