@@ -2,7 +2,7 @@ import boto3
 import os
 import json
 import uuid
-from datetime import datetime
+from datetime import datetime, timedelta
 
 def lambda_handler(message, context):
     if ('body' not in message or message['httpMethod'] != 'POST'):
@@ -16,18 +16,25 @@ def lambda_handler(message, context):
     email_table = boto3.resource('dynamodb', region_name=region)
     table = email_table.Table(table_name)
     activity = json.loads(message['body'])
+    schedule_date_and_time = f"{activity['scheduledDate']} {activity['scheduledTime']}"
+    schedule_date_and_time_datetime = datetime.strptime(schedule_date_and_time, '%Y-%m-%d %H:%M')
+    
+    timezone_offset = int(activity['timezoneOffset'])
+    
+    offseted_date_and_time = schedule_date_and_time_datetime + timedelta(minutes=timezone_offset)
+
     params = {
         'id': str(uuid.uuid4()),
         'emailAddress': activity['emailAddress'],
         'emailContent': activity['emailContent'],
-        'scheduledDate': activity['scheduledDate'],
-        'scheduledTime': activity['scheduledTime'],
+        'scheduledDate': offseted_date_and_time.strftime("%Y-%m-%d"),
+        'scheduledTime': offseted_date_and_time.strftime("%H:%M"),
+        'timezoneOffset': timezone_offset,
         'completionStatus': 'NOT SENT',
         'createdDate': str(datetime.timestamp(datetime.now()))
     }
     response = table.put_item(TableName=table_name, Item=params)
 
-    print(response)
     return {
         'statusCode': 201,
         'headers': {
