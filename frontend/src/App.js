@@ -1,8 +1,9 @@
-import axios from "axios";
 import { useState } from "react";
+import SweetAlert from "sweetalert2-react";
 import "./App.css";
 
 function App() {
+  const [show, setShow] = useState(false);
   const [emailAddress, setEmailAddress] = useState("");
   const [emailContent, setEmailContent] = useState("");
   const [scheduledDateTime, setScheduledDateTime] = useState("");
@@ -12,12 +13,15 @@ function App() {
     const scheduledArray = scheduledDateTime.split("T");
     const scheduledDate = scheduledArray[0];
     const scheduledTime = scheduledArray[1];
-    
+    const currentDate = new Date()
+    const currentTimezone = currentDate.getTimezoneOffset()
+
     let payload = {
       emailAddress: `${emailAddress}`,
       emailContent: `${emailContent}`,
       scheduledDate: `${scheduledDate}`,
       scheduledTime: `${scheduledTime}`,
+      timezoneOffset: `${currentTimezone}`
     };
 
     fetch(
@@ -32,6 +36,11 @@ function App() {
         body: JSON.stringify(payload),
       }
     ).then((response) => console.log(response));
+
+    setShow(true)
+    setEmailAddress('')
+    setEmailContent('')
+    setScheduledDateTime('')
   };
 
   return (
@@ -55,14 +64,14 @@ function App() {
                 <h1 className="mb-5">
                   Schedule sending yourself an Email in the future!
                 </h1>
-                {/* Signup form*/}
-                {/* * * * * * * * * * * * * * * **/}
-                {/* * * SB Forms Contact Form * **/}
-                {/* * * * * * * * * * * * * * * **/}
-                {/* This form is pre-integrated with SB Forms.*/}
-                {/* To make this form functional, sign up at*/}
-                {/* https://startbootstrap.com/solution/contact-forms*/}
-                {/* to get an API token!*/}
+                <div>
+                  <SweetAlert
+                    show={show}
+                    title="Success"
+                    text="Your email schedule was successful"
+                    onConfirm={() => setShow(false)}
+                  />
+                </div>
                 <form
                   className="form-subscribe"
                   id="contactForm"
@@ -108,11 +117,6 @@ function App() {
                   >
                     Submit
                   </button>
-
-                  {/* Submit success message*/}
-                  {/**/}
-                  {/* This is what your users will see when the form*/}
-                  {/* has successfully submitted*/}
                   <div className="d-none" id="submitSuccessMessage">
                     <div className="text-center mb-3">
                       <div className="fw-bolder">
@@ -127,10 +131,6 @@ function App() {
                       </a>
                     </div>
                   </div>
-                  {/* Submit error message*/}
-                  {/**/}
-                  {/* This is what your users will see when there is*/}
-                  {/* an error submitting the form*/}
                   <div className="d-none" id="submitErrorMessage">
                     <div className="text-center text-danger mb-3">
                       Error sending message!
@@ -184,32 +184,6 @@ function App() {
           </div>
         </div>
       </section>
-      {/* Image Showcases*/}
-      {/* <section className="showcase">
-        <div className="container-fluid p-0">
-          <div className="row g-0">
-            <div className="col-lg-6 order-lg-2 text-white showcase-img" style={{ backgroundImage: 'url("assets/img/bg-showcase-1.jpg")' }} />
-            <div className="col-lg-6 order-lg-1 my-auto showcase-text">
-              <h2>Fully Responsive Design</h2>
-              <p className="lead mb-0">When you use a theme created by Start Bootstrap, you know that the theme will look great on any device, whether it's a phone, tablet, or desktop the page will behave responsively!</p>
-            </div>
-          </div>
-          <div className="row g-0">
-            <div className="col-lg-6 text-white showcase-img" style={{ backgroundImage: 'url("assets/img/bg-showcase-2.jpg")' }} />
-            <div className="col-lg-6 my-auto showcase-text">
-              <h2>Updated For Bootstrap 5</h2>
-              <p className="lead mb-0">Newly improved, and full of great utility classes, Bootstrap 5 is leading the way in mobile responsive web development! All of the themes on Start Bootstrap are now using Bootstrap 5!</p>
-            </div>
-          </div>
-          <div className="row g-0">
-            <div className="col-lg-6 order-lg-2 text-white showcase-img" style={{ backgroundImage: 'url("assets/img/bg-showcase-3.jpg")' }} />
-            <div className="col-lg-6 order-lg-1 my-auto showcase-text">
-              <h2>Easy to Use &amp; Customize</h2>
-              <p className="lead mb-0">Landing Page is just HTML and CSS with a splash of SCSS for users who demand some deeper customization options. Out of the box, just add your content and images, and your new landing page will be ready to go!</p>
-            </div>
-          </div>
-        </div>
-      </section> */}
       {/* Testimonials*/}
       <section className="testimonials text-center text-white">
         <div className="container">
@@ -307,12 +281,6 @@ function App() {
           </div>
         </div>
       </footer>
-      {/* Bootstrap core JS*/}
-      {/* Core theme JS*/}
-      {/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * **/}
-      {/* * *                               SB Forms JS                               * **/}
-      {/* * * Activate your form at https://startbootstrap.com/solution/contact-forms * **/}
-      {/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * **/}
     </div>
   );
 }
